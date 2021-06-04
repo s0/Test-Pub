@@ -27,6 +27,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: files-to-publish
+        path: build
     - run: |
         find build
     - name: publish

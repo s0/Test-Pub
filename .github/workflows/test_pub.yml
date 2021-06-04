@@ -3,17 +3,32 @@
 name: Test Pub
 
 # Controls when the action will run. 
-on: [workflow_dispatch, fork, release]
+on: [workflow_dispatch, fork, release, push]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/upload-artifact@v2
+      with:
+        name: files-to-publish
+        path: build
+        retention-days: 1
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: files-to-publish
+    - run: |
+        find build
     - name: publish
       uses: s0/git-publish-subdir-action@develop
       env:
